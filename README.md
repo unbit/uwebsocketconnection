@@ -5,10 +5,10 @@ an attempt to run websockets over uwsgi http router using gevent or uGreen
 
 run it with
 
-uwsgi --http :8080 --http-raw-body --wsgi-file <thisfile> --loop gevent --async 1000 --master --enable-threads
+uwsgi --http :8080 --http-raw-body --wsgi-file your_app.wsgi --loop gevent --async 1000 --master --enable-threads
 
 ```python
-
+# this is your_app.wsgi
 import uwsgi
 from uwebsocketconnection import uGeventWebSocketConnection
 
