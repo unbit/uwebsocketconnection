@@ -6,7 +6,9 @@ an attempt to run websockets over uwsgi http router using gevent or uGreen
 run it with
 
 uwsgi --http :8080 --http-raw-body --wsgi-file <thisfile> --loop gevent --async 1000 --master --enable-threads
+
 {{{
+
 import uwsgi
 from uwebsocketconnection import uGeventWebSocketConnection
 
@@ -50,5 +52,6 @@ def application(env, sr):
     if env.get('HTTP_UPGRADE', '').lower() == 'websocket':
         EchoerWS(env, uwsgi.connection_fd())
         return
+
 
 }}}
