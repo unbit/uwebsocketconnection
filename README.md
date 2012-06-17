@@ -21,7 +21,7 @@ def application(env, sr):
 
     if env['PATH_INFO'] == '/':
         sr('200 OK', [('Content-Type','text/html')])
-        yield """
+        return """
 	<html>
   	  <head>
     	  <script language="Javascript">
@@ -47,7 +47,7 @@ def application(env, sr):
   	</body>
 	</html>
         """
-        return
+        
 
     if env.get('HTTP_UPGRADE', '').lower() == 'websocket':
         EchoerWS(env, uwsgi.connection_fd())
