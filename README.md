@@ -47,7 +47,7 @@ def application(env, sr):
   	</body>
 	</html>
         """
-    return
+        return
 
     if env.get('HTTP_UPGRADE', '').lower() == 'websocket':
         EchoerWS(env, uwsgi.connection_fd())
