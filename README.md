@@ -7,19 +7,21 @@ run it with
 
 uwsgi --http :8080 --http-raw-body --wsgi-file <thisfile> --loop gevent --async 1000 --master --enable-threads
 
-	import uwsgi
-	from uwebsocketconnection import uGeventWebSocketConnection
+```python
 
-	class EchoerWS(uGeventWebSocketConnection):
-    	    def onmessage(self, message):
-        		print message
-        		self.send(message)
+import uwsgi
+from uwebsocketconnection import uGeventWebSocketConnection
 
-	def application(env, sr):
+class EchoerWS(uGeventWebSocketConnection):
+    def onmessage(self, message):
+        print message
+        self.send(message)
 
-    	    if env['PATH_INFO'] == '/':
-        	sr('200 OK', [('Content-Type','text/html')])
-        	yield """
+def application(env, sr):
+
+    if env['PATH_INFO'] == '/':
+        sr('200 OK', [('Content-Type','text/html')])
+        yield """
 	<html>
   	  <head>
     	  <script language="Javascript">
@@ -44,11 +46,12 @@ uwsgi --http :8080 --http-raw-body --wsgi-file <thisfile> --loop gevent --async 
     	<input type="button" value="invia" onClick="invia();"/>
   	</body>
 	</html>
-                """
-        	return
+        """
+    return
 
-	    if env.get('HTTP_UPGRADE', '').lower() == 'websocket':
-                EchoerWS(env, uwsgi.connection_fd())
-                return
+    if env.get('HTTP_UPGRADE', '').lower() == 'websocket':
+        EchoerWS(env, uwsgi.connection_fd())
+        return
+```
 
 
