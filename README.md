@@ -7,51 +7,48 @@ run it with
 
 uwsgi --http :8080 --http-raw-body --wsgi-file <thisfile> --loop gevent --async 1000 --master --enable-threads
 
-{{{
+	import uwsgi
+	from uwebsocketconnection import uGeventWebSocketConnection
 
-import uwsgi
-from uwebsocketconnection import uGeventWebSocketConnection
+	class EchoerWS(uGeventWebSocketConnection):
+    	    def onmessage(self, message):
+        	print message
+        	self.send(message)
 
-class EchoerWS(uGeventWebSocketConnection):
-    def onmessage(self, message):
-        print message
-        self.send(message)
+	def application(env, sr):
 
-def application(env, sr):
+    	    if env['PATH_INFO'] == '/':
+        	sr('200 OK', [('Content-Type','text/html')])
+        	yield """
+	<html>
+  	  <head>
+    	  <script language="Javascript">
+      	    var s = new WebSocket("ws://localhost:8080/foobar/");
+            s.onopen = function() {
+              alert("connesso !!!");
+              s.send("ciao");
+            };
+            s.onmessage = function(e) {
+              alert(e.data);
+            };
 
-    if env['PATH_INFO'] == '/':
-        sr('200 OK', [('Content-Type','text/html')])
-        yield """
-<html>
-  <head>
-    <script language="Javascript">
-      var s = new WebSocket("ws://localhost:8080/foobar/");
-      s.onopen = function() {
-          alert("connesso !!!");
-          s.send("ciao");
-      };
-      s.onmessage = function(e) {
-          alert(e.data);
-      };
+            function invia() {
+              var value = document.getElementById('testo').value;
+              s.send(value);
+            }
+    	  </script>
+ 	 </head>
+  	<body>
+    	<h1>WebSocket</h1>
+    	<input type="text" id="testo"/>
+    	<input type="button" value="invia" onClick="invia();"/>
+  	</body>
+	</html>
+                """
+        	return
 
-      function invia() {
-          var value = document.getElementById('testo').value;
-          s.send(value);
-      }
-    </script>
-  </head>
-  <body>
-    <h1>WebSocket</h1>
-    <input type="text" id="testo"/>
-    <input type="button" value="invia" onClick="invia();"/>
-  </body>
-</html>
-        """
-        return
-
-    if env.get('HTTP_UPGRADE', '').lower() == 'websocket':
-        EchoerWS(env, uwsgi.connection_fd())
-        return
+	    if env.get('HTTP_UPGRADE', '').lower() == 'websocket':
+                EchoerWS(env, uwsgi.connection_fd())
+                return
 
 
-}}}
