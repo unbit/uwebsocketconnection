@@ -12,8 +12,8 @@ uwsgi --http :8080 --http-raw-body --wsgi-file <thisfile> --loop gevent --async 
 
 	class EchoerWS(uGeventWebSocketConnection):
     	    def onmessage(self, message):
-        	print message
-        	self.send(message)
+        		print message
+        		self.send(message)
 
 	def application(env, sr):
 
